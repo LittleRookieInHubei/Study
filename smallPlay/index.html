@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			.box{
+				width: 1000px;
+				height: 475px;
+				padding-top: 225px;
+				margin: 0 auto;
+				position: relative;
+				background: url(images/bg.png);
+			}
+			
+			.cont{
+				width: 688px;
+				height: 414px;
+				overflow: hidden;
+				padding-right: 2px;
+				margin-left: 155px;
+				-box-sizing: border-box;
+				border: 6px solid #e6d4f4;
+				position: relative;
+				background: rgba(0,0,0,0.7) url(images/logo.png) no-repeat 142px 29px;
+			}
+			.one{
+				position: absolute;
+				z-index: 999;
+				left: 169px;
+				top: 239px;
+				width: 80px;
+				height: 80px;
+				border-radius: 50%;
+				box-sizing: border-box;
+				padding-top: 16px;
+				line-height: 24px;
+				font-size: 16px;
+				color: #FFFFFF;
+				text-align: center;
+				border: 1px solid #9a8da0;
+				background: #78258c;
+			}
+			.two{
+				z-index: 999;
+				background: #59599f;
+				top: 339px;
+			}
+			.star{
+				width: 155px;
+				height: 46px;
+				opacity: 1;
+				position: absolute;
+				left: 268px;
+				bottom: 32px;
+				text-decoration: none;
+				background: url(images/btn.png);
+			}
+			.photo{
+				-display: none;
+				width: 74px;
+				height: 63px;
+				position: absolute;
+				left: 0px;
+				top: -63px;
+			}
+			img{
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				margin: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<!--<img src="images/1.png" />-->
+		<div class="box">
+			<div class="one"><span class="yes">0</span>分<br/>得分</div>
+			<div class="one two"><span class="no">0</span>分<br/>失分</div>
+			<div class="cont">
+				<div class="photo"></div>
+				<a href="javaScript:;" class="star"></a>
+			</div>
+		</div>
+		
+		
+		
+		
+		<script src="utils.js"></script>
+			
+		<script>
+			var cont = $('.cont')[0];
+			var star = $('.star')[0];
+			var one = $('.one')[0];
+			var two = $('.two')[0];
+			var yes = $('.yes')[0];
+			var no = $('.no')[0];
+			var photo = $('.photo')[0];
+			var time = null;
+			star.onclick = function(){
+				mTween(star,{bottom:-60,opacity:0},500);
+				mTween(one,{left:61},500);
+				mTween(two,{left:61},500);
+				time = setInterval(play,2500)
+			}
+			
+			
+			
+			var k = 0;//控制失分
+			var num = 0;//控制加速
+			function play(){
+				num += 100;
+				if (k>9) {
+					alert('游戏结束');
+					clearInterval(time);
+					return
+				}
+				var n = Math.round(Math.random()*(parseFloat(getComputedStyle(cont).width)-74));//随机位置
+				var m = Math.round(Math.random()*(6-1)+1);//1到6的随机数，控制图片
+				
+				photo.innerHTML = `<img src="images/${m}.png" />`;
+				photo.style.left = n+'px';
+				photo.style.display = 'block';
+				mTween(photo,{top:352},2000-num,'linear',function(){
+					shake(cont,'top',20,function(){
+						photo.style.top = '-63px';
+						k++;
+						no.innerHTML = k;
+						photo.style.display = 'none';
+					})
+					
+				})
+				
+			};
+			var l = 0;//控制得分
+			photo.onmousedown = function(){//点击图片
+				clearInterval(photo.timer);
+				shake(photo,'left',20,function(){
+					l++;
+					photo.style.top = '-63px';
+					yes.innerHTML = l;
+				})
+			}
+		</script>
+	</body>
+</html>
