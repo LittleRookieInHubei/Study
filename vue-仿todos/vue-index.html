@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="css/base.css">
+    	<link rel="stylesheet" type="text/css" href="css/index.css">
+		<script src="js/vue.js"></script>
+	</head>
+
+	<body>
+		
+		<section class="todoapp">
+			<div>
+				<header class="header">
+					<h1>todos</h1>
+					<input class="new-todo" placeholder="请输入内容" value="" v-model = "todo" @keydown.13 = "add">
+				</header>
+				<section class="main" v-show = "list.length">
+					<input class="toggle-all" type="checkbox" v-model = "isCheckedAll">
+					<ul class="todo-list">
+						<li :class="{completed:item.isoff,editing:edit === item}" v-for = "item,index in filterList">
+							<div class="view">
+								<input class="toggle" type="checkbox" v-model = "item.isoff">
+								<label @dblclick = "dbadd(item)">{{item.title}}</label>
+								<button class="destroy" @click = "deletdestroy(index)"></button>
+							</div>
+							<input class="edit" v-model="item.title" @keydown.13 = "editfn(item)" @blur = "editfn(item)" @keydown.27="unesc(item)">
+						</li>
+					</ul>
+				</section>
+				<footer class="footer" v-show = "list.length">
+					<span class="todo-count">
+						<strong>{{noChecked}}</strong>
+						<span>条未选中</span>
+					</span>
+					 <ul class="filters">
+						<li><a href="#/all" :class = "{selected:filterHash === 'all'}" >全部</a></li>
+						<li><a href="#/active" :class = "{selected:filterHash === 'active'}" >未选中</a></li> 
+		            	<li><a href="#/completed" :class = "{selected:filterHash === 'completed'}" >选中</a></li>
+		            </ul>
+				</footer>
+			</div>
+   		 </section>
+	
+
+
+
+
+	<script>
+		let data = localStorage.getItem("num")
+	
+		if (data) {
+			data = JSON.parse(data)
+		}else{
+			data = []
+		}
+
+
+		let vm = new Vue({
+			el:".todoapp",
+			data:{
+				list:data,
+				todo:"",
+				edit:"",// 用来存当前正在编辑的那条数据
+				beforEdit:"",//存储当前双击的value
+				filterHash:"all"
+			},
+
+			watch:{
+				list:{
+					deep:true,
+					handler(){
+						localStorage.setItem("num",JSON.stringify(this.list))
+					}
+				}
+			},
+
+			computed:{
+				//选中的数据
+				checkAll(){
+					return this.list.filter(function(item){
+						return item.isoff
+					})
+				},
+
+				//判断是否全选
+				isCheckedAll:{
+					get(){
+						return this.checkAll.length === this.list.length
+					},
+					set(newValue){
+						this.list.forEach(function (item){
+							item.isoff = newValue;
+						})
+					}
+				},
+				//未选择的数据
+				noCheck(){
+					return this.list.filter(function(item){
+						return !item.isoff
+					})
+				},
+				//未选中的数量
+				noChecked(){
+					return this.list.length - this.checkAll.length
+				},
+
+				filterList(){
+					if (this.filterHash === "all") {
+						return this.list
+					} else if(this.filterHash === "active"){
+						return this.noCheck
+					} else if(this.filterHash === "completed"){
+						return this.checkAll
+					}else{
+						return this.list
+					}
+				}
+
+
+			},
+			methods:{
+				//添加
+				add(ev){
+					if (this.todo.trim("") === ""){
+						return
+					} 
+						
+						this.list.push({
+							id:Math.random(),
+							title:this.todo,
+							isoff:false
+						})
+						this.todo = ""	
+				},
+				//删除
+				deletdestroy(index){
+					this.list.splice(index,1)
+				},
+				//双击
+				dbadd(item){
+					//console.log(item.title)
+					this.edit = item;
+					this.beforEdit = item.title;//保存编辑之前的title
+				},
+				//修改
+				editfn(item){
+					if (item.title === "") {
+						let n = this.list.indexOf(item);
+						if(n === -1){
+							return
+						}
+						this.list.splice(n,1)
+					}
+					this.edit = ""
+				},
+				//不想修改时
+				unesc(item){
+					item.title = this.beforEdit;
+					this.beforEdit = "";
+					this.edit = "";
+				}
+			}
+		})
+
+
+		window.onhashchange = function(){
+			let hash = window.location.hash;
+			//console.log(hash)
+			if(hash){
+				vm.filterHash = hash.slice(2);
+				//console.log(vm.filterHash)
+			}
+		}	
+		window.onhashchange();
+	</script>
+
+	</body>
+</html>
