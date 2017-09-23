@@ -1,0 +1,103 @@
+.box{
+	width: 764px;
+	height: 600px;
+	padding-top: 200px;
+	margin: 0 auto;
+	background: url(../images/bg.png);
+}
+.cont{
+	width: 480px;
+	height: 300px;
+	margin: 0 auto;
+	position: relative;
+	border-radius: 10px 10px 10px 10px;
+	background:#FFFFFF url(../images/logo.png) no-repeat center ;
+}
+.head{
+	width: 480px;
+	height: 216px;
+	padding-top: 18px;
+	padding-bottom: 18px;
+}
+
+.foot{
+	width: 480px;
+	height: 48px;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	background: #e15671;
+	border-radius: 0 0 10px 10px;
+}
+
+
+
+
+
+.head .head_cont{
+	width: 480px;
+	height: 216px;
+}
+.head_cont li{
+	width: 480px;
+	height: 36px;
+	line-height: 36px;
+	color: #000000;
+}
+.head_cont input{
+	width: 14px;
+	height: 14px;
+	margin-left: 30px;
+	margin-top: 12px;
+	float: left;
+}
+.head_cont span{
+	float: left;
+	margin-left: 20px;
+}
+.head_cont em{
+	float: right;
+	margin-right: 34px;
+}
+
+
+
+
+
+.foot .foot_ul{
+	width: 480px;
+	height: 24px;
+	line-height: 24px;
+	color: #FFFFFF;
+	margin-top: 12px;
+
+}
+#more{
+	width: 14px;
+	height: 14px;
+	margin: 4px 20px 0 30px;
+	float: left;
+}
+.select{
+	float: left;
+	margin-right: 86px;
+}
+.collection{
+	float: left;
+	width: 66px;
+	padding-left: 34px;
+	background: url(../images/1.png) no-repeat 0 center;
+}
+.add_to{
+	float: left;
+	width: 68px;
+	padding-left: 32px;
+	background: url(../images/2.png) no-repeat ;
+}
+
+.delete{
+	float: left;
+	width: 34px;
+	padding-left: 36px;
+	background: url(../images/3.png) no-repeat;
+}
