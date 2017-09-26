@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			#box2 {
+				width: 100px;
+				height: 100px;
+				background: red;
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+			#box3 {
+				width: 500px;
+				height: 30px;
+				border: 1px solid #000;
+				position: relative;
+				margin-top: 120px;
+			}
+			#bar {
+				width: 30px;
+				height: 100%;
+				background: blue;
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+		</style>
+		<script>
+		//订阅观察者模式
+			class Look{
+				constructor(){
+					this.looker = {}  //记录订阅者
+				}
+				//订阅方法
+				looking(attr,taget){
+					if(!this.looker[attr]){
+						this.looker[attr] = [];
+					}
+					this.looker[attr].push(taget)
+				}
+				//发布
+				open(tagetName){
+					let arr = this.looker[tagetName];
+					if (arr) {
+						for (var i = 0; i < arr.length; i++) {
+							arr[i]()
+						}
+					}
+				}
+				
+				//删除
+				dele (num,fn){
+					let arr = this.looker[num];
+					if (arr) {
+						for (var i = 0; i < arr.length; i++) {
+							if (arr[i] === fn) {
+								arr.splice(i,1);
+								break
+							}
+						}
+					}
+				}
+			}
+		
+		
+		
+		
+		
+			
+		//--------------------------------------------------------------------	
+			
+			//DIV 拖拽
+			class Auto extends Look{
+				constructor(box){
+					super();
+					this.box = box;
+				}
+				autoinit(){
+					this.box.onmousedown  = this.downFn.bind(this);
+				}
+				downFn(ev){
+					//this.open("down-open")
+					this.disX = ev.clientX - this.box.offsetLeft;
+					this.disY = ev.clientY - this.box.offsetTop;
+					document.onmousemove = this.moveFn.bind(this);
+					document.onmouseup = this.upFn.bind(this);
+				}
+				moveFn(ev){
+					this.open("move-open")
+					this.left = ev.clientX - this.disX;
+					this.top = ev.clientY - this.disY;
+					//限制
+					this.open("stop")
+					this.box.style.left = this.left +"px";
+					this.box.style.top = this.top +"px";
+				}
+				upFn(){
+					//this.open("up-open")
+					document.onmousemove = document.onmouseup = null;
+				}
+			}
+			
+			
+			
+		</script>
+	</head>
+	<body>
+		<div id="box2"></div>
+		<div id="box3">
+			<div id="bar"></div>
+		</div>
+		
+		
+		
+		<script>
+			let o = new Auto(box2);
+			o.autoinit();
+			
+			let o1 = new Auto(bar);
+			o1.autoinit();
+			/*o.looking("down-open",fn1)
+			function fn1(){
+				console.log("我down下了")
+			}
+			o.looking("move-open",fn2)
+			function fn2(){
+				console.log("我move了")
+			}
+			o.looking("up-open",fn3)
+			function fn3(){
+				console.log("我up了")
+			}*/
+			
+			o.looking("stop",fn)
+			function fn(){
+				//console.log(o.left,o)
+				if (o.left < 0) {
+					o.left = 0;
+				}
+				if (o.top < 0) {
+					o.top = 0;
+				}
+				if(o.left > document.documentElement.clientWidth - o.box.offsetWidth){
+					o.left = document.documentElement.clientWidth - o.box.offsetWidth
+				}
+				if (o.top > document.documentElement.clientHeight - o.box.offsetHeight) {
+					o.top = document.documentElement.clientHeight - o.box.offsetHeight
+				}
+			}
+			
+			
+			
+			o1.looking("stop",fn1)
+			function fn1(){
+				o1.top = 0;
+				if (o1.left < 0) {
+					o1.left = 0;
+				}
+				console.log(box3.offsetWidth)
+				if (o1.left > box3.offsetWidth - o1.box.offsetWidth) {
+					o1.left = box3.offsetWidth - o1.box.offsetWidth
+					
+				}
+				box2.style.left = o1.left + "px";
+			}
+			
+			
+			/*
+				let c = new Look();
+				c.looking("100",function(){
+					console.log("通知小明")
+				})
+				c.looking("100",function(){
+					console.log("通知小李")
+				})
+				c.looking("300",fn)
+				
+				function fn(){
+					console.log("通知小米")
+				
+				}
+				
+				document.onclick = function(){
+					c.open("100");
+					c.open("300");
+				}
+				//删除
+				c.dele("300",fn)
+				console.log(c.looker)
+			*/
+			
+			
+		/*	
+			let p = new Auto(box2);
+			p.autoinit();
+			
+			let p1 = new Auto(bar);
+			p1.autoinit();
+		*/
+		</script>
+	</body>
+</html>
