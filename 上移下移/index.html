@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/main.css">
+	<script src="js/utils.js"></script>
+</head>
+<body>
+<section class="wrap">
+	<div class="wrap-left">
+		<ul class="list">
+			<li>
+				<span>jQuery</span>
+				<div class="btn">
+					<a href="javascript:;"  class="up">上移</a>
+					<a href="javascript:;" class="down">下移</a>
+				</div>
+			</li>
+			<li>
+				<span>AJAX</span>
+				<div class="btn">
+					<a href="javascript:;"  class="up">上移</a>
+					<a href="javascript:;" class="down">下移</a>
+				</div>
+			</li>
+			<li>
+				<span>JS基础-2</span>
+				<div class="btn">
+					<a href="javascript:;"  class="up">上移</a>
+					<a href="javascript:;" class="down">下移</a>
+				</div>
+			</li>
+			<li>
+				<span>移动端实战</span>
+				<div class="btn">
+					<a href="javascript:;"  class="up">上移</a>
+					<a href="javascript:;" class="down">下移</a>
+				</div>
+			</li>
+			<li>
+				<span>canvas游戏</span>
+				<div class="btn">
+					<a href="javascript:;"  class="up">上移</a>
+					<a href="javascript:;" class="down">下移</a>
+				</div>
+			</li>
+		</ul>
+	</div>
+</section>
+	<script>
+		var wrapLeft = $(".wrap-left")[0];
+		var list = $(".list")[0];
+		var lis = $("li",wrapLeft);//需要移动的li集合;
+		
+		function moveForLi(){
+			var downBtns = $(".down",wrapLeft);//下移按钮
+			var upBtns = $(".up",wrapLeft);//上移按钮
+
+			//循环li;li的下标与按钮的下标一一对应；因为点击上移和下移按钮有可能操作的是同一个li元素。所以把他们的事件放在他们共同都能访问到的位置：父级的li身上；
+			for(var i = 0;i<lis.length;i++){
+				lis[i].index = i;
+				downBtns[i].index = i;
+				//点击下移按钮绑定事件：
+				downBtns[i].onclick = function(){
+					var that = this;//因为mTween函数中this指向的是window；所有声明一个That变量用来代替mTween函数中所有使用this的地方；
+					parent = this.parentNode.parentNode;//点击按钮所对应的li;
+					liHeight = parent.offsetHeight+10;//相邻两个元素的垂直距离；
+
+					if(parent.nextElementSibling){//如果有下一个兄弟元素
+						mTween(parent.nextElementSibling,{top:(that.index)*liHeight},500,"linear");//下一个兄弟元素移到当前这个元素的位置；
+						mTween(parent,{top:(that.index+1)*liHeight},500,"linear");//当前元素移到下一个兄弟元素的位置；
+					    list.insertBefore(parent.nextElementSibling,parent);//将下一个兄弟元素插入到当前这个元素的前边；
+					}
+					if(parent.index==lis.length-1){//当点击的按钮的父级即li为最后一个时；
+						
+						for(var j=0; j<downBtns.length-1; j++){//当前按钮以外的按钮全部都相对于自身下移一个元素的距离；
+							(function(func){
+								mTween(downBtns[func].parentNode.parentNode,{top:(func+1)*liHeight},200,'linear');
+							})(j);	
+							
+						}
+						mTween(parent,{top:0},500,"linear");//当前元素移到第一个位置；
+						list.insertBefore(parent,list.firstElementChild);//将点击按钮的父级li插入到第一个元素的前边；
+					}
+					moveForLi();//函数自调；
+				}	
+			}
+
+			//循环li;li的下标与按钮的下标一一对应；因为点击上移和下移按钮有可能操作的是同一个li元素。所以把他们的事件放在他们共同都能访问到的位置：父级的li身上；
+
+			for(var i = 0;i<lis.length;i++){
+				upBtns[i].index = i;
+				upBtns[i].onclick = function(){
+					console.log(parent.previousElementSibling);
+					var that = this;
+					parent = this.parentNode.parentNode;
+					liHeight = parent.offsetHeight+10;
+					if(parent.previousElementSibling){//如果点击按钮的父级有上一个兄弟元素
+						console.log(parent,this.index);
+						mTween(parent.previousElementSibling,{top:(that.index)*liHeight},500,"linear");//上一个兄弟元素移到但到当前位置；
+						mTween(parent,{top:(that.index-1)*liHeight},500,"linear");//自己移到上一个位置；
+					    list.insertBefore(parent,parent.previousElementSibling);//将点击的元素的父级li插入到自己上一个兄弟元素的前边；
+					}
+					if(parent.index==0){//当点击的按钮的li为第一个时；
+						
+						for(var j=1; j<=upBtns.length-1; j++){//循环除了第一个以外的所有元素；
+							(function(func){
+								mTween(upBtns[func].parentNode.parentNode,{top:(func-1)*liHeight},200,'linear');//每个元素相对于自身上移一个元素的位置；
+							})(j);	
+							
+						}
+						mTween(parent,{top:liHeight*4},500,"linear");//当前点击的元素移到最后的位置；
+						list.appendChild(parent);//将这个元素插入到最后；
+					}
+					moveForLi();
+				}
+			}
+
+			
+		}
+		moveForLi();
+	</script>
+</body>
+</html>
