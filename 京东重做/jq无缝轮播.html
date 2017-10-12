@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		
+		<link rel="stylesheet" type="text/css" href="slide.css" />
+		<style type="text/css">
+			body{
+				background-color: #ffd800;
+			}
+			.nav .blue {
+				background-color: blue;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="slide">
+			<div  class="tagClient">
+				<ul class="list">
+					<li><img src="./ads/1.png" /></li> 
+					<li><img src="./ads/2.png" /></li> 
+				</ul>
+			<div class="prev"></div>
+			<div class="next"></div>
+			</div>
+			
+			<div class="nav">
+				<span class="active"></span>
+				<span></span>
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>
+		</div>
+		<script src="jquery-3.2.0.js"></script>
+		<script>
+			let list = $('.list');
+			let firstLi = list.find('li').eq(0);
+			let firstLiWidth = firstLi.width();
+			let spans = $('.nav span');
+			let imgs = $('.list img');
+			let m = 0;
+			var arr = ["./ads/1.png","./ads/2.png","./ads/3.png","./ads/4.png","./ads/5.png"];
+
+			let timer = null;
+			function autoPlay(){
+				timer =  setInterval(function(){
+					m++;
+					if(m > arr.length-1){
+						m = 0;
+					}
+					imgs[1].src = arr[m];
+					spans.eq(m-1).removeClass('active'); 
+					spans.eq(m).addClass('active');
+					list
+						.animate({
+							left:- firstLiWidth
+						},300,function(){
+							console.log(m)
+							imgs[0].src = imgs[1].src,
+							list.css('left',0)
+						})
+				},1000)
+			}
+
+			autoPlay()//自动播放
+
+			$('.next').click(function(){
+				if(list.is(':animated')){
+					return
+				}
+				m++;
+				if(m > arr.length-1){
+					m = 0;
+				}
+				imgs[1].src = arr[m];
+				spans.eq(m-1).removeClass('active'); 
+				spans.eq(m).addClass('active');
+				list
+					.animate({
+						left:- firstLiWidth
+					},300,function(){
+						console.log(m)
+						imgs[0].src = imgs[1].src,
+						list.css('left',0)
+					})	
+			})
+			$('.prev').click(function(){
+				if(list.is(':animated')){
+					return
+				};
+				m--;
+				if(m < 0){
+					m = arr.length-1
+				}
+				imgs[1].src = arr[m];
+				spans.eq(m == arr.length-1 ? 0 : m+1).removeClass('active'); 
+				spans.eq(m).addClass('active');
+				list
+					.animate({
+						left:- firstLiWidth
+					},300,function(){
+						imgs[0].src = arr[m]
+						list.css('left',0)
+					})	
+			})
+			$('.nav').on('mouseover','span',function(){
+				clearInterval(timer);
+				spans.eq(m).removeClass('active');
+				m = $(this).index();
+				spans.eq(m).addClass('active');
+				imgs[1].src = arr[m];
+				list
+					.animate({
+						left:- firstLiWidth
+					},300,function(){
+						console.log(m)
+						imgs[0].src = imgs[1].src,
+						list.css('left',0)
+					})	
+			})
+
+			$('.nav').on('mouseout','span',function(){
+				autoPlay()
+			})
+
+
+
+			$('.tagClient').mouseover(function(){
+				clearInterval(timer)
+			})
+
+			$('.tagClient').mouseout(function(){
+				autoPlay()
+			})
+
+		</script>
+	</body>
+
+</html>
